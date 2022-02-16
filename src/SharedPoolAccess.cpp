@@ -91,13 +91,10 @@ Ece420::SharedPoolAccess::SharedPoolAccess(bool rw_flag_option, int number_of_lo
 }
 
 void Ece420::SharedPoolAccess::normalLock(int lock_position) {
-
     normal_lock_array[lock_position].lock();
 }
 
 void Ece420::SharedPoolAccess::normalLock() {
-
-
     normal_lock_array[0].lock();
 }
 

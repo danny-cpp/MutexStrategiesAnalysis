@@ -27,8 +27,4 @@ void ProdCon::ArgumentCheck::checkArg(int &argc, char const *argv[], int &return
         exit(-2);
     }
 
-#if DEBUG_MODE
-    std::cout << "Log file is: " << return_log_ID << std::endl;
-#endif
-
 }

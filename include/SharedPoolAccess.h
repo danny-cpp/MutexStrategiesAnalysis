@@ -118,7 +118,7 @@ namespace Ece420 {
             std::condition_variable waitingToRead;
             std::condition_variable waitingToWrite;
         };
-        
+
 
     private:
         std::vector<std::mutex> normal_lock_array;

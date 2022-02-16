@@ -12,22 +12,47 @@
 #include "SharedPoolAccess.h"
 
 
-void doSomething(int in, char** theArray) {
-    int clientFileDescriptor=in;
-    char str[200];
+void doSomething(int clientFileDescriptor, char** theArray, Ece420::SharedPoolAccess &pool_access_manger) {
 
-    read(clientFileDescriptor,str,200);
-    printf("reading from client:%s\n",str);
-    write(clientFileDescriptor,str,200);
+    char str[COM_BUFF_SIZE];
+    read(clientFileDescriptor,str,COM_BUFF_SIZE);
+
+
+    Lab2ProvidedAPI::ClientRequest request;
+    Lab2ProvidedAPI::ParseMsg(str, &request);
+
+
+    char to_be_sent[COM_BUFF_SIZE];
+    if (request.is_read == 1) {
+        // Attempt to modify share memory. It should lock this critical section
+        pool_access_manger.normalLock();
+        Lab2ProvidedAPI::getContent(to_be_sent, request.pos, theArray);
+        pool_access_manger.normalUnlock();
+        // End critical section
+
+        write(clientFileDescriptor, to_be_sent, COM_BUFF_SIZE);
+    }
+    else {
+        // Attempt to modify share memory. It should lock this critical section
+        pool_access_manger.normalLock();
+        Lab2ProvidedAPI::setContent(request.msg, request.pos, theArray);
+        pool_access_manger.normalUnlock();
+        // End critical section
+    }
+
+    // write(clientFileDescriptor, "to_be_sent", COM_BUFF_SIZE);
+    // printf("reading from client:%s\n",str);
+
+
     close(clientFileDescriptor);
 }
 
 int main(int argc, char const *argv[]) {
 
-    std::cout << "Server initiated!" << std::endl;
+    std::cout << "Server using 1 single mutex method!" << std::endl;
 
-    int number_of_client = 10;
-    int string_array_size = 10;
+    int number_of_client = 100;
+    int string_array_size = 1000;
 
     // ProdCon::ArgumentCheck::checkArg(argc, argv, int &return_thread_num);
 
@@ -42,11 +67,10 @@ int main(int argc, char const *argv[]) {
     }
 
 
-    Ece420::SharedPoolAccess spa;
-    std::shared_lock lock(spa.shared_lock);
+    Ece420::SharedPoolAccess sharedPoolAccess(false, 1);
 
 
-    Ece420::Networking::socketIni("127.0.0.1", 3000, number_of_client, doSomething, theArray);
+    Ece420::Networking::socketIni("127.0.0.1", 3000, number_of_client, doSomething, theArray, sharedPoolAccess);
 
 
     // char* src = "hello";
@@ -57,6 +81,10 @@ int main(int argc, char const *argv[]) {
     // std::cout << result << std::endl;
 
 
+    for (int i = 0; i < string_array_size; i++) {
+        delete theArray[i];
+    }
+    delete theArray;
 
     return 0;
 }

@@ -5,6 +5,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "SharedPoolAccess.h"
+
 
 namespace Ece420 {
 
@@ -24,18 +26,30 @@ namespace Ece420 {
         [[noreturn]] static std::vector<std::thread> socketIni(const std::string& IP,
                                            int port_number,
                                            int number_of_clients,
-                                           const std::function<void (int, char**)>& thread_action_lambda,
-                                           char** theArray) {
+                                           const std::function<void (int, char**, SharedPoolAccess&)>& thread_action_lambda,
+                                           char** shared_data_array,
+                                           SharedPoolAccess &pool_access_manager) {
 
             // Creating a thread (handler) array that will be return to the user for
             // reference
             std::vector<std::thread> thread_array;
             thread_array.reserve(number_of_clients);
 
+
             // File descriptors for sockaddr_in, server, client
             struct sockaddr_in sock_var;
             int serverFileDescriptor=socket(AF_INET,SOCK_STREAM,0);
             int clientFileDescriptor;
+
+
+            // Forcefully attaching socket to the port
+            int opt = 1;
+            if (setsockopt(serverFileDescriptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+                           &opt, sizeof(opt)))
+            {
+                std::cout << "ERROR! Failed to reuse port. Please remake and restart! Aborting..." << std::endl;
+                exit(-1);
+            }
 
             // Initiate with IP and port
             sock_var.sin_addr.s_addr=inet_addr(IP.c_str());
@@ -71,7 +85,7 @@ namespace Ece420 {
 
                             // The lambda (loosely speaking, the code block, like function pointer) is passed by
                             // reference for speed. The clientFileDescriptor however, is copied (passed by value)
-                            thread_action_lambda(clientFileDescriptor, theArray);
+                            thread_action_lambda(clientFileDescriptor, shared_data_array, pool_access_manager);
                         });
                     }
 
@@ -79,7 +93,8 @@ namespace Ece420 {
                 close(serverFileDescriptor);
             }
             else {
-                std::cout << "Socket creation failed" << std::endl;
+                std::cout << "ERROR! Socket creation failed. Please remake and restart! Aborting..." << std::endl;
+                exit(-1);
             }
 
             return thread_array;
