@@ -52,9 +52,11 @@ int main(int argc, char const *argv[]) {
     std::cout << "Server using 1 single mutex method!" << std::endl;
 
     int number_of_client = 100;
-    int string_array_size = 1000;
+    int string_array_size = 0;
+    std::string IP;
+    int port_number = 0;
 
-    // ProdCon::ArgumentCheck::checkArg(argc, argv, int &return_thread_num);
+    ProdCon::ArgumentCheck::checkArg(argc, argv, string_array_size, IP, port_number);
 
     // Lab2ProvidedAPI::ClientRequest rq;
     // char* msg = strdup("000-0-hello");
@@ -70,7 +72,7 @@ int main(int argc, char const *argv[]) {
     Ece420::SharedPoolAccess sharedPoolAccess(false, 1);
 
 
-    Ece420::Networking::socketIni("127.0.0.1", 3000, number_of_client, doSomething, theArray, sharedPoolAccess);
+    Ece420::Networking::socketIni(IP, port_number, number_of_client, doSomething, theArray, sharedPoolAccess);
 
 
     // char* src = "hello";

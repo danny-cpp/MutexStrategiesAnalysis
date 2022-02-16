@@ -10,12 +10,16 @@ namespace ProdCon {
     class ArgumentCheck {
     public:
         /**
-         * Handle arguments. Return number of threads user issued.
+         * Handle arguments. Return shared array size
          *
          * @param argc
          * @param argv
-         * @param return_thread_num
+         * @param return_array_size
          */
-        static void checkArg(int &argc, char const *argv[], int &return_thread_num);
+        static void checkArg(int &argc,
+                             char const *argv[],
+                             int &return_array_size,
+                             std::string &return_IP,
+                             int &return_port_number);
     };
 }
