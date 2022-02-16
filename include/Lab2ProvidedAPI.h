@@ -1,3 +1,12 @@
+/**
+ * This code is a provided template and has little modifications from
+ * the author. Changes were made for compatibility to C++ projects and
+ * portability such as namespace grouping
+ *
+ * DN
+ *
+ */
+
 #pragma once
 
 #include <string.h>

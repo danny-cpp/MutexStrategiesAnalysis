@@ -7,6 +7,7 @@
 #include <PCH.h>
 
 #include "Lab2ProvidedAPI.h"
+#include "Networking.h"
 
 
 int main(int argc, char const *argv[]) {
