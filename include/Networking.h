@@ -1,5 +1,6 @@
 #pragma once
 
+#include <PCH.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -8,6 +9,7 @@
 namespace Ece420 {
 
     class Networking {
+    public:
 
         /**
          * Create a sockaddr_in address that binds to the IP and port provided
@@ -18,7 +20,7 @@ namespace Ece420 {
          * @param thread_action_lambda
          * @return
          */
-        [[noreturn]] std::vector<std::thread> SocketIni(const std::string& IP,
+        [[noreturn]] static std::vector<std::thread> socketIni(const std::string& IP,
                                            int port_number,
                                            int number_of_clients,
                                            const std::function<void(int)>& thread_action_lambda) {
