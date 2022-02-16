@@ -18,12 +18,14 @@ namespace Ece420 {
          * @param port_number
          * @param number_of_clients
          * @param thread_action_lambda
+         * @param theArray
          * @return
          */
         [[noreturn]] static std::vector<std::thread> socketIni(const std::string& IP,
                                            int port_number,
                                            int number_of_clients,
-                                           const std::function<void(int)>& thread_action_lambda) {
+                                           const std::function<void (int, char**)>& thread_action_lambda,
+                                           char** theArray) {
 
             // Creating a thread (handler) array that will be return to the user for
             // reference
@@ -69,7 +71,7 @@ namespace Ece420 {
 
                             // The lambda (loosely speaking, the code block, like function pointer) is passed by
                             // reference for speed. The clientFileDescriptor however, is copied (passed by value)
-                            thread_action_lambda(clientFileDescriptor);
+                            thread_action_lambda(clientFileDescriptor, theArray);
                         });
                     }
 

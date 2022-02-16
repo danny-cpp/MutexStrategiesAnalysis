@@ -8,9 +8,11 @@
 
 #include "Lab2ProvidedAPI.h"
 #include "Networking.h"
+#include "ArgumentCheck.h"
+#include "SharedPoolAccess.h"
 
 
-void doSomething(int in) {
+void doSomething(int in, char** theArray) {
     int clientFileDescriptor=in;
     char str[200];
 
@@ -27,17 +29,24 @@ int main(int argc, char const *argv[]) {
     int number_of_client = 10;
     int string_array_size = 10;
 
+    // ProdCon::ArgumentCheck::checkArg(argc, argv, int &return_thread_num);
+
     // Lab2ProvidedAPI::ClientRequest rq;
     // char* msg = strdup("000-0-hello");
     // Lab2ProvidedAPI::ParseMsg(msg, &rq);
 
     char** theArray = (char **) malloc(string_array_size * sizeof (char *));
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < string_array_size; i++) {
         theArray[i] = (char *) malloc(COM_BUFF_SIZE * sizeof (char ));
         sprintf(theArray[i], "String %d: the initial value", i);
     }
 
-    Ece420::Networking::socketIni("127.0.0.1", 3000, number_of_client, doSomething);
+
+    Ece420::SharedPoolAccess spa;
+    std::shared_lock lock(spa.shared_lock);
+
+
+    Ece420::Networking::socketIni("127.0.0.1", 3000, number_of_client, doSomething, theArray);
 
 
     // char* src = "hello";
