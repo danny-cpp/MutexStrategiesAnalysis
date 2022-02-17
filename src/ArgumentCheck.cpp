@@ -10,6 +10,7 @@ void ProdCon::ArgumentCheck::checkArg(int &argc, char const *argv[],
 
     if (argc == 1) {
         std::cout << "Error: No array size specified" << std::endl;
+        std::cout << "usage: " << argv[0] << " <Size of theArray_ on server> <server ip> <server port>" << std::endl;
         exit(-1);
     }
 

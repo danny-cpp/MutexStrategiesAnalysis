@@ -52,7 +52,7 @@ MAIN_FILES := Server1.o Server2.o Server3.o Server4.o Client.o
 .PHONY: all clean
 
 
-all: $(TARGET1) $(TARGET2)
+all: $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5)
 	@echo "\nTotal process spawned for compilation: $(NPROCS)"
 
 
