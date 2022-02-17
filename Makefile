@@ -12,8 +12,11 @@ CC	:= g++
 SRCDIR	:= src
 BLDDIR	:= build
 ASMCC	:= objdump
-TARGET1	:= bin/server
-TARGET2	:= bin/client
+TARGET1	:= client
+TARGET2	:= main1
+TARGET3	:= main2
+TARGET4	:= main3
+TARGET5	:= main4
 
 
 ### CONFIGURABLE SECTION !!!
@@ -44,6 +47,7 @@ MODE := $(RELEASE)
 SRC	:= $(shell find $(SRCDIR) -type f -name *.cpp)
 OBJS	:= $(patsubst $(SRCDIR)/%, $(BLDDIR)/%, $(SRC:.cpp=.o))
 INCLUDE	:= -I include
+MAIN_FILES := Server1.o Server2.o Server3.o Server4.o Client.o
 
 .PHONY: all clean
 
@@ -52,15 +56,38 @@ all: $(TARGET1) $(TARGET2)
 	@echo "\nTotal process spawned for compilation: $(NPROCS)"
 
 
-$(TARGET1): $(filter-out $(BLDDIR)/Client.o, $(OBJS))
+$(TARGET1): $(filter-out $(addprefix $(BLDDIR)/, $(filter-out Client.o, $(MAIN_FILES))), $(OBJS))
 	@echo "\n##__Linking objs for $(TARGET1) executable"
-	@$(CC) $(MODE) -o $@ $^ || true
+	@$(CC) $(MODE) -o $@ $^
+	@cp $(TARGET1) bin/
 -include $(BLDDIR)/*.d
 
 
-$(TARGET2): $(filter-out $(BLDDIR)/Server.o, $(OBJS))
+$(TARGET2): $(filter-out $(addprefix $(BLDDIR)/, $(filter-out Server1.o, $(MAIN_FILES))), $(OBJS))
 	@echo "\n##__Linking objs for $(TARGET2) executable"
-	@ $(CC) $(MODE) -o $@ $^ || true
+	@$(CC) $(MODE) -o $@ $^
+	@cp $(TARGET2) bin/
+-include $(BLDDIR)/*.d
+
+
+$(TARGET3): $(filter-out $(addprefix $(BLDDIR)/, $(filter-out Server2.o, $(MAIN_FILES))), $(OBJS))
+	@echo "\n##__Linking objs for $(TARGET3) executable"
+	@$(CC) $(MODE) -o $@ $^
+	@cp $(TARGET3) bin/
+-include $(BLDDIR)/*.d
+
+
+$(TARGET4): $(filter-out $(addprefix $(BLDDIR)/, $(filter-out Server3.o, $(MAIN_FILES))), $(OBJS))
+	@echo "\n##__Linking objs for $(TARGET4) executable"
+	@$(CC) $(MODE) -o $@ $^
+	@cp $(TARGET4) bin/
+-include $(BLDDIR)/*.d
+
+
+$(TARGET5): $(filter-out $(addprefix $(BLDDIR)/, $(filter-out Server4.o, $(MAIN_FILES))), $(OBJS))
+	@echo "\n##__Linking objs for $(TARGET5) executable"
+	@$(CC) $(MODE) -o $@ $^
+	@cp $(TARGET5) bin/
 -include $(BLDDIR)/*.d
 
 
@@ -76,6 +103,7 @@ clean:
 	rm -fr $(BLDDIR)
 	rm -fr bin/*
 	rm -rf $(PRJNAME)
+	rm -rf $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5)
 
 
 
