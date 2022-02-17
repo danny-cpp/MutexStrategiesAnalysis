@@ -35,7 +35,7 @@ void Lab2ProvidedAPI::getContent(char *dst, int pos, char **theArray) {
     }
 }
 
-void saveTimes(double* time, int length){
+void Lab2ProvidedAPI::saveTimes(double *time, int length) {
     FILE* op;
     int i;
     double elapsed_time = 0;
@@ -50,4 +50,5 @@ void saveTimes(double* time, int length){
     fprintf(op, "%e\n", elapsed_time);
     fclose(op);
 }
+
 

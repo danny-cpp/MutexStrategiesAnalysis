@@ -6,6 +6,8 @@
 #include <arpa/inet.h>
 
 #include "SharedPoolAccess.h"
+#include "Lab2ProvidedAPI.h"
+#include "Timing.h"
 
 
 namespace Ece420 {
@@ -69,6 +71,8 @@ namespace Ece420 {
 
                 // Ready to accept new client (if it is within the limit)
                 int ID = 1;
+                bool ready_to_get_avg = false;
+                double sum_time_taken = 0;
                 while(true) {
 
                     // Can handle upto @number_of_clients at a time
@@ -87,12 +91,25 @@ namespace Ece420 {
                                 std::cout << ID << "th request  "  << std::endl;
                             #endif
 
-                            // The lambda (loosely speaking, the code block, like function pointer) is passed by
-                            // reference for speed. The clientFileDescriptor however, is copied (passed by value)
-                            thread_action_lambda(clientFileDescriptor, shared_data_array, pool_access_manager);
+                            // TIMING SCOPE
+                            double elapsed_time = 0;
+                            {
+                                Shell379::Utilities::totalTiming<std::milli> timer(&elapsed_time);
+                                // The lambda (loosely speaking, the code block, like function pointer) is passed by
+                                // reference for speed. The clientFileDescriptor however, is copied (passed by value)
+                                thread_action_lambda(clientFileDescriptor, shared_data_array, pool_access_manager);
+                            }
+                            sum_time_taken += elapsed_time;
 
-                            // std::terminate();
                         });
+
+                        // Indicates we have finished a "batch". We will compute avg and write to fill.
+                        // Ready for a new batch
+                        if (ID == COM_NUM_REQUEST) {
+                            ready_to_get_avg = true;
+                            ID = 1;
+                            break;
+                        }
 
                         ID++;
                     }
@@ -102,7 +119,18 @@ namespace Ece420 {
                         thread_array.pop_front();
                     }
 
+                    if (ready_to_get_avg) {
+
+                        double result = (sum_time_taken / 1000) / COM_NUM_REQUEST;
+                        double* avg_latency = &result;
+
+                        Lab2ProvidedAPI::saveTimes(avg_latency, 1);
+
+                        ready_to_get_avg = false;
+                        sum_time_taken = 0;
+                    }
                 }
+
                 close(serverFileDescriptor);
             }
             else {
