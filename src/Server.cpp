@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
 
     std::cout << "Server using 1 single mutex method!" << std::endl;
 
-    int number_of_client = 100;
+    int number_of_client = 1000;
     int string_array_size = 0;
     std::string IP;
     int port_number = 0;
@@ -81,6 +81,11 @@ int main(int argc, char const *argv[]) {
     // Lab2ProvidedAPI::getContent(result, 3, theArray);
     //
     // std::cout << result << std::endl;
+
+
+    // for (auto &item : handlers) {
+    //     item.detach();
+    // }
 
 
     for (int i = 0; i < string_array_size; i++) {

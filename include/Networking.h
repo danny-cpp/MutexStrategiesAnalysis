@@ -23,17 +23,16 @@ namespace Ece420 {
          * @param theArray
          * @return
          */
-        [[noreturn]] static std::vector<std::thread> socketIni(const std::string& IP,
-                                           int port_number,
-                                           int number_of_clients,
-                                           const std::function<void (int, char**, SharedPoolAccess&)>& thread_action_lambda,
-                                           char** shared_data_array,
-                                           SharedPoolAccess &pool_access_manager) {
+        [[noreturn]] static std::deque<std::thread> socketIni(const std::string& IP,
+                                                              int port_number,
+                                                              int number_of_clients,
+                                                              const std::function<void (int, char**, SharedPoolAccess&)>& thread_action_lambda,
+                                                              char** shared_data_array,
+                                                              SharedPoolAccess &pool_access_manager) {
 
             // Creating a thread (handler) array that will be return to the user for
             // reference
-            std::vector<std::thread> thread_array;
-            thread_array.reserve(number_of_clients);
+            std::deque<std::thread> thread_array;
 
 
             // File descriptors for sockaddr_in, server, client
@@ -69,6 +68,7 @@ namespace Ece420 {
                 listen(serverFileDescriptor,2000);
 
                 // Ready to accept new client (if it is within the limit)
+                int ID = 1;
                 while(true) {
 
                     // Can handle upto @number_of_clients at a time
@@ -77,16 +77,29 @@ namespace Ece420 {
                         // For each accept request, we handle on different thread
                         clientFileDescriptor=accept(serverFileDescriptor,NULL,NULL);
 
-                        #if DEBUG_MODE
-                        std::cout << "Connected to client " << clientFileDescriptor << std::endl;
+                        #if 0
+                            std::cout << "Connected to client " << clientFileDescriptor << std::endl;
                         #endif
 
-                        thread_array.emplace_back([&, clientFileDescriptor] {
+                        thread_array.emplace_back([&, clientFileDescriptor, ID] {
+
+                            #if DEBUG_MODE
+                                std::cout << ID << "th request  "  << std::endl;
+                            #endif
 
                             // The lambda (loosely speaking, the code block, like function pointer) is passed by
                             // reference for speed. The clientFileDescriptor however, is copied (passed by value)
                             thread_action_lambda(clientFileDescriptor, shared_data_array, pool_access_manager);
+
+                            // std::terminate();
                         });
+
+                        ID++;
+                    }
+
+                    for (auto &item : thread_array) {
+                        item.detach();
+                        thread_array.pop_front();
                     }
 
                 }
