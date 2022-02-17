@@ -26,7 +26,7 @@ TARGET5	:= main4
 # Change optimization flag (-OX) here. Add/Remove debug flag (-g) here.
 CFLAGS := -std=c++11 -MP -MD -pthread -pipe
 DEBUG := $(CFLAGS) -Wall -O0 -g -D_GLIBCXX_DEBUG -DDEBUG_MODE
-RELEASE := $(CFLAGS) -w -O3 -march=native -DDEBUG_MODE
+RELEASE := $(CFLAGS) -w -O3 -march=native
 EXTREME := $(CFLAGS) -Ofast -frename-registers -fopenmp -D_GLIBCXX_PARALLEL -march=native # Don't even think about it
 # Turn this to false to see command echo to shell
 SUPPR_ECHO := true
