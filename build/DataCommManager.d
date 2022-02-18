@@ -291,7 +291,8 @@ build/DataCommManager.o: src/DataCommManager.cpp \
  /usr/include/c++/9/unordered_map /usr/include/c++/9/bits/hashtable.h \
  /usr/include/c++/9/bits/hashtable_policy.h \
  /usr/include/c++/9/bits/unordered_map.h /usr/include/c++/9/unordered_set \
- /usr/include/c++/9/bits/unordered_set.h include/Lab2ProvidedAPI.h
+ /usr/include/c++/9/bits/unordered_set.h include/Lab2ProvidedAPI.h \
+ include/Timing.h
 
 /usr/include/stdc-predef.h:
 
@@ -1066,3 +1067,5 @@ include/PCH.h:
 /usr/include/c++/9/bits/unordered_set.h:
 
 include/Lab2ProvidedAPI.h:
+
+include/Timing.h:

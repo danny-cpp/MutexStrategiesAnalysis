@@ -28,7 +28,8 @@ namespace Ece420 {
         [[noreturn]] static std::deque<std::thread> socketIni(const std::string& IP,
                                                               int port_number,
                                                               int number_of_clients,
-                                                              const std::function<void (int, char**, SharedPoolAccess&)>& thread_action_lambda,
+                                                              const std::function<double(int, char **,
+                                                                                         SharedPoolAccess &)> &thread_action_lambda,
                                                               char** shared_data_array,
                                                               SharedPoolAccess &pool_access_manager) {
 
@@ -91,14 +92,10 @@ namespace Ece420 {
                                 std::cout << ID << "th request  "  << std::endl;
                             #endif
 
-                            // TIMING SCOPE
-                            double elapsed_time = 0;
-                            {
-                                Shell379::Utilities::totalTiming<std::milli> timer(&elapsed_time);
-                                // The lambda (loosely speaking, the code block, like function pointer) is passed by
-                                // reference for speed. The clientFileDescriptor however, is copied (passed by value)
-                                thread_action_lambda(clientFileDescriptor, shared_data_array, pool_access_manager);
-                            }
+                            // The lambda (loosely speaking, the code block, like function pointer) is passed by
+                            // reference for speed. The clientFileDescriptor however, is copied (passed by value)
+                            double elapsed_time = thread_action_lambda(clientFileDescriptor, shared_data_array, pool_access_manager);
+
                             sum_time_taken += elapsed_time;
 
                         });
